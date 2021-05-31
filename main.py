@@ -7,13 +7,13 @@ def crossover(first_chromosome: Chromosome, second_chromosome: Chromosome, type:
     second_children = Chromosome(_map)
 
     if type == 'one_point':
-        offspring = random.randint(1, len(first_chromosome.get_string()) - 1)
+        offspring = random.randint(0, len(first_chromosome.get_string()) - 1)
         fisrt_children.set_string(first_chromosome.get_string()[:offspring] + second_chromosome.get_string()[offspring:])
         second_children.set_string(second_chromosome.get_string()[:offspring] + first_chromosome.get_string()[offspring:] )
         return fisrt_children, second_children
     elif type == 'two_point':
-        a = random.randint(1, len(first_chromosome.get_string()) - 1)
-        b = random.randint(1, len(first_chromosome.get_string()) - 1)
+        a = random.randint(0, len(first_chromosome.get_string()))
+        b = random.randint(0, len(first_chromosome.get_string()))
         offspring_1 = min(a, b)
         offspring_2 = max(a, b)
         fisrt_children.set_string(first_chromosome.get_string()[:offspring_1] + second_chromosome.get_string()[offspring_1:offspring_2] + first_chromosome.get_string()[offspring_2:])
