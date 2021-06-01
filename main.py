@@ -1,6 +1,16 @@
 import  random 
 from Chromosome import Chromosome
 
+def sort_population(population:list):
+    population.sort(key=lambda x:x.get_fitness(),reverse=True)
+
+def averaging(population) -> float:
+    sum = 0
+    for chromosome in population:
+        sum += chromosome.get_fitness()
+    
+    return sum / len(population)
+
 ### Crossover ###
 def crossover(first_chromosome: Chromosome, second_chromosome: Chromosome, type: str = "one_point") -> tuple:
     _map = first_chromosome.get_map()
@@ -22,12 +32,9 @@ def crossover(first_chromosome: Chromosome, second_chromosome: Chromosome, type:
         second_children.set_string(second_chromosome.get_string()[:offspring_1] + first_chromosome.get_string()[offspring_1:offspring_2] + second_chromosome.get_string()[offspring_2:])
     
     return fisrt_children, second_children 
-
-def sort_population(population:list):
-    population.sort(key=lambda x:x.get_fitness(),reverse=True)
     
 ### Selection ###
-def selection(population: list ,type = 1):
+def select(population: list ,type = 1):
     sort_population(population)
     selection_length = len(population)
     if selection_length % 2 != 0:
@@ -48,31 +55,49 @@ def selection(population: list ,type = 1):
 if __name__ == '__main__':
     _map = ['_', '_', '_', '_', 'G', '_', 'M', 'L', '_', '_', 'G', '_']
     population = []
-    Number_of_population = 200
-
-    for i in range(Number_of_population):
+    number_of_population = 200
+    mean_list = []
+    # 1) initial population
+    for i in range(number_of_population):
         c = Chromosome(_map)
         population.append(c)
     
-    print('Selection')
-    print(selection(population,type=1)[0].get_fitness())
+    sort_population(population)
+    max_fitness = population[0].get_fitness()
+    counter = 0
+    iterate_number = 100
+    print(max_fitness)
 
-    print('######')
-    c1 = Chromosome(_map)
-    c2 = Chromosome(_map)
-    
-    print(c1.get_string(), c1.get_fitness())
-    print(c2.get_string(), c2.get_fitness())
-    print('crossover')
-    children = crossover(c1, c2, type='one_point')
-    fisrt_child = children[0]
-    second_child = children[1]
-    print(fisrt_child.get_string(), fisrt_child.get_fitness())
-    print(second_child.get_string(), second_child.get_fitness())
-    
-    print('######')
-    c3 = Chromosome(_map)
-    print(c3.get_string(), c3.get_fitness())
-    print('Mutation')
-    c3.mutate(possibility=0.5)
-    print(c3.get_string(), c3.get_fitness())
+    while True:
+        if counter == iterate_number:
+            break
+        # 2)Selection
+        selected_list = select(population)
+        # 3)Crossover
+        epoch = []
+        for i in range(len(selected_list)):
+            a = random.randint(0,  len(selected_list) - 1)
+            b = random.randint(0,  len(selected_list) - 1)
+            while b == a:
+                b = random.randint(0,  len(selected_list) - 1)
+
+            children = crossover(selected_list[a], selected_list[b])
+            epoch.append(children[0])
+            epoch.append(children[1])
+        # 4)Mutation
+        for chromosome in epoch:
+            chromosome.mutate()
+        
+        mean_list.append(averaging(epoch))
+
+        population[10:] = epoch[:]
+
+        counter += 1
+        sort_population(population)
+
+        if population[0].get_fitness() > max_fitness:
+            max_fitness = population[0].get_fitness()
+            counter = 0
+
+    print(population[0].get_string(), max_fitness)
+    print(mean_list)
