@@ -31,6 +31,18 @@ class Chromosome:
             random.shuffle(self.__actions)
             self.__string.append(self.__actions[random.randint(0, len(self.__actions) - 1)])
 
+    def mutate(self, possibility = 0.1):
+        l = []
+        if possibility == 0.1:
+            l = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+        elif possibility == 0.5:
+            l = [0, 1]
+
+        if l[random.randint(0, len(l) - 1)] == 1:
+            gen_number = random.randint(0, len(self.__map) - 1)
+            self.__string[gen_number] = self.__actions[random.randint(0, len(self.__actions) - 1)]
+            self.__calc_fitness()
+
     def __calc_fitness(self) -> None:
         path = location = 1
         score = max_path = 0
