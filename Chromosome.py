@@ -43,7 +43,7 @@ class Chromosome:
             self.__string[gen_number] = self.__actions[random.randint(0, len(self.__actions) - 1)]
             self.__calc_fitness()
 
-    def __calc_fitness(self) -> None:
+    def __calc_fitness(self, _win_mode_ = 1) -> None:
         path = location = 1
         score = max_path = 0
         __win__ = True
@@ -69,11 +69,13 @@ class Chromosome:
                     max_path = max(max_path, path-1)
                     path = 0
                     __win__ = False
+            if self.__string[i] == '1':
+                score = score - 0.5
             location = location + 1
             path = path + 1
         max_path = max(max_path, path)
         score = score + max_path
-        if __win__:
+        if __win__ and _win_mode_:
             score = score + 5
 
         self.__fitness = score
